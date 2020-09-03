@@ -17,4 +17,6 @@ public class MultiplicationResultAttempt {
     private final User user;
     private final Multiplication multiplication;
     private final int resultAttempt;
+
+    private final boolean correct;
 }

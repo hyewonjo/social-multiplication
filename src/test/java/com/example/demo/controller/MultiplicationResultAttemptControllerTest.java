@@ -34,7 +34,7 @@ class MultiplicationResultAttemptControllerTest {
 
     // 이 객체는 initFields() 메서드를 이용해 자동으로 초기화
     private JacksonTester<MultiplicationResultAttempt> jsonResult;
-    private JacksonTester<MultiplicationResultAttemptController.ResultResponse> jsonResponse;
+    private JacksonTester<MultiplicationResultAttempt> jsonResponse;
 
     @BeforeEach
     public void setUp() {
@@ -57,7 +57,8 @@ class MultiplicationResultAttemptControllerTest {
 
         User user = new User("hyewon jo");
         Multiplication multiplication = new Multiplication(50, 70);
-        MultiplicationResultAttempt multiplicationResultAttempt = new MultiplicationResultAttempt(user, multiplication, 3500);
+        MultiplicationResultAttempt multiplicationResultAttempt = new MultiplicationResultAttempt(user, multiplication, 3500,
+                correct);
 
         // when
         String content = jsonResult.write(multiplicationResultAttempt).getJson();
@@ -70,6 +71,10 @@ class MultiplicationResultAttemptControllerTest {
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString())
-                .isEqualTo(jsonResponse.write(new MultiplicationResultAttemptController.ResultResponse(correct)).getJson());
+                .isEqualTo(jsonResponse.write(new MultiplicationResultAttempt(
+                        multiplicationResultAttempt.getUser(),
+                        multiplicationResultAttempt.getMultiplication(),
+                        multiplicationResultAttempt.getResultAttempt(),
+                        correct)).getJson());
     }
 }
