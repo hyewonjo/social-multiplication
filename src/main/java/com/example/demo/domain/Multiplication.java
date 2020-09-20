@@ -28,4 +28,8 @@ public final class Multiplication {
     // 인수
     private final int factorA;
     private final int factorB;
+
+    Multiplication() {
+        this(0, 0);
+    }
 }

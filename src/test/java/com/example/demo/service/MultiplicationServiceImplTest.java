@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.domain.Multiplication;
 import com.example.demo.domain.MultiplicationResultAttempt;
 import com.example.demo.domain.User;
+import com.example.demo.repository.MultiplicationRepository;
 import com.example.demo.repository.MultiplicationResultAttemptRepository;
 import com.example.demo.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,11 +28,14 @@ class MultiplicationServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private MultiplicationRepository multiplicationRepository;
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         this.multiplicationServiceImpl = new MultiplicationServiceImpl(randomGeneratorService,
-                multiplicationResultAttemptRepository, userRepository);
+                multiplicationResultAttemptRepository, userRepository, multiplicationRepository);
     }
 
     @Test
