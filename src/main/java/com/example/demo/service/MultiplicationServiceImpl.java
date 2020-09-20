@@ -2,18 +2,29 @@ package com.example.demo.service;
 
 import com.example.demo.domain.Multiplication;
 import com.example.demo.domain.MultiplicationResultAttempt;
+import com.example.demo.domain.User;
+import com.example.demo.repository.MultiplicationResultAttemptRepository;
+import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+
+import java.util.Optional;
 
 @Service
 public class MultiplicationServiceImpl implements MultiplicationService {
 
     private final RandomGeneratorService randomGeneratorService;
+    private final MultiplicationResultAttemptRepository multiplicationResultAttemptRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public MultiplicationServiceImpl(RandomGeneratorService randomGeneratorService) {
+    public MultiplicationServiceImpl(RandomGeneratorService randomGeneratorService,
+                                     MultiplicationResultAttemptRepository multiplicationResultAttemptRepository,
+                                     UserRepository userRepository) {
         this.randomGeneratorService = randomGeneratorService;
+        this.multiplicationResultAttemptRepository = multiplicationResultAttemptRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -23,21 +34,25 @@ public class MultiplicationServiceImpl implements MultiplicationService {
 
     @Override
     public boolean checkAttempt(MultiplicationResultAttempt multiplicationResultAttempt) {
-        boolean correct = multiplicationResultAttempt.getResultAttempt() ==
-                multiplicationResultAttempt.getMultiplication().getFactorA() *
-                        multiplicationResultAttempt.getMultiplication().getFactorB();
+        // 해당 닉네임의 사용자가 존재하는지 확인
+        Optional<User> user = userRepository.findByAlias(multiplicationResultAttempt.getUser().getAlias());
 
-        // expression이 true가 아닌 경우 exception을 던진다.
+        // expression 이 true 가 아닌 경우 exception 을 던진다.
         // 조작된 답안을 방지
         Assert.isTrue(!multiplicationResultAttempt.isCorrect(), "채점한 상태로 보낼 수 없습니다!");
 
-        // 복사본을 만들고 correct 필드를 상황에 맞게 설정
-        // 자.. 복사본을 왜 만들어야할까. ? final이니까?
-        // 심지어 지금 안써.
-        MultiplicationResultAttempt checkedAttempt = new MultiplicationResultAttempt(multiplicationResultAttempt.getUser(),
-                multiplicationResultAttempt.getMultiplication(), multiplicationResultAttempt.getResultAttempt(),
-                correct);
+        // 답안을 채점
+        boolean isCorrect = multiplicationResultAttempt.getResultAttempt() ==
+                multiplicationResultAttempt.getMultiplication().getFactorA() *
+                        multiplicationResultAttempt.getMultiplication().getFactorB();
 
-        return correct;
+        MultiplicationResultAttempt checkedAttempt = new MultiplicationResultAttempt(user.orElse(multiplicationResultAttempt.getUser()),
+                multiplicationResultAttempt.getMultiplication(), multiplicationResultAttempt.getResultAttempt(),
+                isCorrect);
+
+         // 답안을 저장
+        multiplicationResultAttemptRepository.save(checkedAttempt);
+
+        return isCorrect;
     }
 }

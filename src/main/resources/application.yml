@@ -9,7 +9,6 @@ spring:
       hibernate:
         show_sql: true # 학습 목적으로 콘솔에 SQL을 출력
   datasource:
-    url: "jdbc:h2:file:~/social-multiplication;DB_CLOSE_ON_EXIT=FALSE;" # 파일로 데이터베이스를 생성
-
-
-
+    url: "jdbc:h2:tcp://localhost/~/social-multiplication;DB_CLOSE_ON_EXIT=FALSE;" # 파일로 데이터베이스를 생성
+    username: "root"
+    password: "root123"
