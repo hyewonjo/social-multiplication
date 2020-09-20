@@ -3,6 +3,8 @@ package com.example.demo.service;
 import com.example.demo.domain.Multiplication;
 import com.example.demo.domain.MultiplicationResultAttempt;
 
+import java.util.List;
+
 public interface MultiplicationService {
 
     /**
@@ -17,4 +19,6 @@ public interface MultiplicationService {
      * @return 곱셈 결과가 맞으면 true, 아니면 false
      */
     boolean checkAttempt(final MultiplicationResultAttempt multiplicationResultAttempt);
+
+    List<MultiplicationResultAttempt> getStatsForUser(String userAlias);
 }

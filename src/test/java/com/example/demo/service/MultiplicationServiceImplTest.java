@@ -6,10 +6,14 @@ import com.example.demo.domain.User;
 import com.example.demo.repository.MultiplicationRepository;
 import com.example.demo.repository.MultiplicationResultAttemptRepository;
 import com.example.demo.repository.UserRepository;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -84,5 +88,24 @@ class MultiplicationServiceImplTest {
         // assert
         assertThat(attemptResult).isFalse();
         verify(multiplicationResultAttemptRepository).save(multiplicationResultAttempt);
+    }
+
+    @Test
+    public void retrieveStatsTest() {
+        // given
+        Multiplication multiplication = new Multiplication(50, 60);
+        User user = new User("John_doe");
+
+        MultiplicationResultAttempt attempt1 = new MultiplicationResultAttempt(user, multiplication, 3010, false);
+        MultiplicationResultAttempt attempt2 = new MultiplicationResultAttempt(user, multiplication, 3051, false);
+        List<MultiplicationResultAttempt> latestAttempts = Lists.newArrayList(attempt1, attempt2);
+        given(userRepository.findByAlias("John_doe")).willReturn(Optional.empty());
+        given(multiplicationResultAttemptRepository.findTop5ByUserAliasOrderByIdDesc("John_doe")).willReturn(latestAttempts);
+
+        // when
+        List<MultiplicationResultAttempt> latestAttemptsResult = multiplicationServiceImpl.getStatsForUser("John_doe");
+
+        // then
+        assertThat(latestAttemptsResult).isEqualTo(latestAttempts);
     }
 }

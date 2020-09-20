@@ -31,4 +31,8 @@ public class MultiplicationResultAttempt {
     private final int resultAttempt;
 
     private final boolean correct;
+
+    MultiplicationResultAttempt() {
+        this(null, null, 0, false);
+    }
 }

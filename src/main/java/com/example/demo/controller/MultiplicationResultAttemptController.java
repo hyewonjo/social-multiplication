@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/results")
@@ -23,5 +25,10 @@ public class MultiplicationResultAttemptController {
                 multiplicationResultAttempt.getMultiplication(),
                 multiplicationResultAttempt.getResultAttempt(),
                 isCorrect));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<MultiplicationResultAttempt>> getStatistics(@RequestParam("alias") String alias) {
+        return ResponseEntity.ok(multiplicationService.getStatsForUser(alias));
     }
 }
